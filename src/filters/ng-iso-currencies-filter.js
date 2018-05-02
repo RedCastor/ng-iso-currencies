@@ -3,7 +3,7 @@
     'use strict';
 
     //Load module
-    var module = angular.module('isoCurrencies', []);
+    var module = angular.module('isoCurrencies');
 
 
     /**

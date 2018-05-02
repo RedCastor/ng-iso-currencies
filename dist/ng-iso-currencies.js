@@ -852,7 +852,7 @@
 
 (function(angular) {
     "use strict";
-    var module = angular.module("isoCurrencies", []);
+    var module = angular.module("isoCurrencies");
     module.filter("isoCurrency", [ "$filter", "isoCurrencyService", function($filter, isoCurrencyService) {
         Number.prototype.numberFormat = function(decimals, dec_sep, thousand_sep) {
             dec_sep = typeof dec_sep !== "undefined" ? dec_sep : ".";
@@ -901,7 +901,7 @@
 
 (function(angular) {
     "use strict";
-    var module = angular.module("isoCurrencies", []);
+    var module = angular.module("isoCurrencies");
     module.provider("isoCurrencies", [ "iso4217Currencies", function isoCurrencyProvider(iso4217Currencies) {
         this.code = "USD";
         this.text = "US Dollar";
