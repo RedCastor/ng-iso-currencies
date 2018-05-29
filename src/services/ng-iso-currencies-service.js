@@ -13,6 +13,7 @@
         this.code = 'USD';
         this.text = 'US Dollar';
         this.fraction = 2;
+        this.fractionStrict = false;
         this.symbol = '$';
         this.position = 'left';
         this.decimalSep = '.';
@@ -38,6 +39,7 @@
                 code:         this.code,
                 text:         this.text,
                 fraction:     this.fraction,
+                fractionStrict: this.fractionStrict,
                 symbol:       this.symbol,
                 position:     this.position,
                 decimalSep:   this.decimalSep,
@@ -56,6 +58,9 @@
                 },
                 getFraction: function() {
                     return currency.fraction;
+                },
+                getFractionStrict: function() {
+                    return currency.fractionStrict;
                 },
                 getSymbol: function() {
                     return currency.symbol;
@@ -90,6 +95,12 @@
         this.setFraction = function(fraction) {
             if (angular.isDefined(fraction) && angular.isNumber(fraction)) {
                 this.fraction = fraction;
+            }
+        };
+
+        this.setFractionStrict = function(fractionStrict) {
+            if (angular.isDefined(fractionStrict)) {
+                this.fractionStrict = !fractionStrict ? false : true;
             }
         };
 

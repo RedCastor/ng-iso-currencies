@@ -854,17 +854,22 @@
     "use strict";
     var module = angular.module("isoCurrencies");
     module.filter("isoCurrency", [ "$filter", "isoCurrencyService", function($filter, isoCurrencyService) {
-        Number.prototype.numberFormat = function(decimals, dec_sep, thousand_sep) {
+        Number.prototype.numberFormat = function(decimals, dec_sep, thousand_sep, decimals_strict) {
             dec_sep = typeof dec_sep !== "undefined" ? dec_sep : ".";
             thousand_sep = typeof thousand_sep !== "undefined" ? thousand_sep : ",";
-            var parts = parseFloat(this.toFixed(decimals)).toString().split(".");
+            var num = this.toFixed(decimals);
+            num = !decimals_strict ? parseFloat(num) : num;
+            var parts = num.toString().split(".");
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousand_sep);
             return parts.join(dec_sep);
         };
-        return function(amount, currencyCode, fraction, dec_sep, thousand_sep, position) {
+        return function(amount, currencyCode, fraction, fraction_strict, dec_sep, thousand_sep, position) {
             var currency = isoCurrencyService.getCurrencyByCode(currencyCode);
             if (angular.isDefined(fraction)) {
                 currency.fraction = fraction;
+            }
+            if (angular.isDefined(fraction_strict)) {
+                currency.fractionStrict = fraction_strict;
             }
             if (angular.isDefined(dec_sep)) {
                 currency.decimalSep = dec_sep;
@@ -875,7 +880,7 @@
             if (angular.isDefined(position)) {
                 currency.position = position;
             }
-            var amount_fraction = parseFloat(amount).numberFormat(currency.fraction, currency.decimalSep, currency.thousandSep);
+            var amount_fraction = parseFloat(amount).numberFormat(currency.fraction, currency.decimalSep, currency.thousandSep, currency.fractionStrict);
             var result = "";
             switch (currency.position) {
               case "left":
@@ -906,6 +911,7 @@
         this.code = "USD";
         this.text = "US Dollar";
         this.fraction = 2;
+        this.fractionStrict = false;
         this.symbol = "$";
         this.position = "left";
         this.decimalSep = ".";
@@ -925,6 +931,7 @@
                 code: this.code,
                 text: this.text,
                 fraction: this.fraction,
+                fractionStrict: this.fractionStrict,
                 symbol: this.symbol,
                 position: this.position,
                 decimalSep: this.decimalSep,
@@ -942,6 +949,9 @@
                 },
                 getFraction: function() {
                     return currency.fraction;
+                },
+                getFractionStrict: function() {
+                    return currency.fractionStrict;
                 },
                 getSymbol: function() {
                     return currency.symbol;
@@ -971,6 +981,11 @@
         this.setFraction = function(fraction) {
             if (angular.isDefined(fraction) && angular.isNumber(fraction)) {
                 this.fraction = fraction;
+            }
+        };
+        this.setFractionStrict = function(fractionStrict) {
+            if (angular.isDefined(fractionStrict)) {
+                this.fractionStrict = !fractionStrict ? false : true;
             }
         };
         this.setSymbol = function(symbol) {

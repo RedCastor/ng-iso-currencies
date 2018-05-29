@@ -13,11 +13,14 @@
 
 
 
-        Number.prototype.numberFormat = function(decimals, dec_sep, thousand_sep) {
+        Number.prototype.numberFormat = function(decimals, dec_sep, thousand_sep, decimals_strict) {
             dec_sep = typeof dec_sep !== 'undefined' ? dec_sep : '.';
             thousand_sep = typeof thousand_sep !== 'undefined' ? thousand_sep : ',';
 
-            var parts = parseFloat( this.toFixed(decimals) ).toString().split('.');
+            var num = this.toFixed(decimals);
+            num = !decimals_strict ? parseFloat(num) : num;
+
+            var parts = num.toString().split('.');
 
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousand_sep);
 
@@ -33,13 +36,18 @@
          * @param number fraction User specified fraction size that overwrites default value
          * @return string
          */
-        return function(amount, currencyCode, fraction, dec_sep, thousand_sep, position) {
+        return function(amount, currencyCode, fraction, fraction_strict, dec_sep, thousand_sep, position) {
 
             var currency = isoCurrencyService.getCurrencyByCode(currencyCode);
 
             //Get the size fraction
             if (angular.isDefined(fraction)) {
                 currency.fraction = fraction;
+            }
+
+            //Get the decimal strict
+            if (angular.isDefined(fraction_strict)) {
+                currency.fractionStrict = fraction_strict;
             }
 
             //Get the decimal separator
@@ -52,14 +60,14 @@
                 currency.thousandSep = thousand_sep;
             }
 
-            //Get the thousand separator
+            //Get the position
             if (angular.isDefined(position)) {
                 currency.position = position;
             }
 
 
             //format number fraction size, decimal separator and thousand separator
-            var amount_fraction = parseFloat(amount).numberFormat(currency.fraction, currency.decimalSep, currency.thousandSep);
+            var amount_fraction = parseFloat(amount).numberFormat(currency.fraction, currency.decimalSep, currency.thousandSep, currency.fractionStrict);
 
             var result = '';
 
