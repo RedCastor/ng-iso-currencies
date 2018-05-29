@@ -1026,8 +1026,9 @@
                 if (code) {
                     _set_currency_iso4217(code);
                 }
-                return currency;
-            }
+                return angular.copy(currency);
+            },
+            setCurrencyByCode: _set_currency_iso4217
         };
     } ]);
 })(angular);
